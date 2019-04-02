@@ -2,6 +2,7 @@ darksky = require("../common/darksky")
 
 var express = require('express')
 var router = express.Router()
+var axios = require('axios')
 
 const MaxHourlyForecast = 24
 
@@ -110,6 +111,28 @@ router.get('/Daily', (req, res)=>{
     })
 })
 
+router.get('/Date', (req, res) => {
+    let longtitude = req.query['longtitude']
+    let latitude = req.query['latitude']
+    let date = req.query['date']
+    let month = req.query['month']
+    let year = req.query['year']
+    let time_string = year + '-' + month +'-'+date
+    console.log(time_string)
+    console.log(longtitude)
+    console.log(latitude)
+    let time_miliseconds = new Date(time_string).getTime()
+    console.log(time_miliseconds)
+    const request_url = 'https://api.darksky.net/forecast/bf1a10e1f3efc8ab396812da1081cae0/' 
+                    + latitude + ',' + longtitude + ',' + time_miliseconds/1000 + '?exclude=flags,alerts&unit=si'
+    axios.get(request_url)
+    .then(result => {
+        res.send(result.data)
+    })
+    .catch(err => {
+        console.log(err)
+    })
+})
 
 const getForecast =  (long, lat, unit, excludeBlocks) => {
     // let date = new Date()
@@ -123,6 +146,7 @@ const getForecast =  (long, lat, unit, excludeBlocks) => {
     .get()
     
 };
+
 
 const convertWeatherData = (data) => {
     return {
