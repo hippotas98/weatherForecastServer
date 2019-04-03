@@ -8,7 +8,7 @@ const MaxHourlyForecast = 24
 
 router.get('/Current', (req, res, next) => {
     let latitude = req.query["latitude"]
-    let longitude = req.query["longtitude"]
+    let longitude = req.query["longitude"]
     console.log(longitude)
     console.log(latitude)
     getForecast(longitude, latitude, "si", ["minutely", "hourly", "daily", "alerts", "flags"])
@@ -30,7 +30,7 @@ router.get('/Current', (req, res, next) => {
 
 router.get('/Hourly', (req, res) => {
     let latitude = req.query["latitude"]
-    let longitude = req.query["longtitude"]
+    let longitude = req.query["longitude"]
     console.log(longitude)
     console.log(latitude)
     getForecast(longitude, latitude, "si", ["minutely", "currently", "daily", "alerts", "flags"])
@@ -59,7 +59,7 @@ router.get('/Hourly', (req, res) => {
 
 router.get('/Daily', (req, res)=>{
     let latitude = req.query["latitude"]
-    let longitude = req.query["longtitude"]
+    let longitude = req.query["longitude"]
     console.log(longitude)
     console.log(latitude)
     getForecast(longitude, latitude, "si", ["minutely", "currently", "hourly", "alerts", "flags"])
@@ -112,7 +112,7 @@ router.get('/Daily', (req, res)=>{
 })
 
 router.get('/Date', (req, res) => {
-    let longtitude = req.query['longtitude']
+    let longitude = req.query['longitude']
     let latitude = req.query['latitude']
     let date = req.query['date']
     let month = req.query['month']
@@ -124,7 +124,7 @@ router.get('/Date', (req, res) => {
     let time_miliseconds = new Date(time_string).getTime()
     console.log(time_miliseconds)
     const request_url = 'https://api.darksky.net/forecast/bf1a10e1f3efc8ab396812da1081cae0/' 
-                    + latitude + ',' + longtitude + ',' + time_miliseconds/1000 + '?exclude=flags,alerts&unit=si'
+                    + latitude + ',' + longitude + ',' + time_miliseconds/1000 + '?exclude=flags,alerts&unit=si'
     axios.get(request_url)
     .then(result => {
         res.send(result.data)
