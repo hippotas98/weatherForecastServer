@@ -6,12 +6,48 @@ var axios = require('axios')
 
 const MaxHourlyForecast = 24
 
+router.post('/summary', (req, res, next) => {
+    let cities = req.body.cities
+    let unit = req.body.unit || 'si'
+    let cities_weather  = []
+    let count = 0;
+    for(let index = 0;index < (cities.length);++index){
+        let long = cities[index].longitude
+        let lat = cities[index].latitude
+        getForecast(long, lat, unit, ["minutely", "hourly", "daily", "alerts", "flags"])
+        .then(result => {
+            let data = {
+                timezone: result.timezone,
+                longitude: result.longitude,
+                latitude: result.latitude,
+                city: cities[index].city,
+                current: {
+                    time: toLocalTime(result.currently.time),
+                    icon: result.currently.icon,
+                    temp: result.currently.temperature,
+                    uvIndex: result.currently.uvIndex,
+                    humidity: result.currently.humidity
+                }
+            }
+            count += 1
+            cities_weather.push(data)
+            if(count == cities.length){
+                res.send(cities_weather)
+            }
+        })
+        
+    }
+    
+    
+})
+
 router.get('/Current', (req, res, next) => {
     let latitude = req.query["latitude"]
     let longitude = req.query["longitude"]
+    let unit = req.query['unit'] || 'si'
     console.log(longitude)
     console.log(latitude)
-    getForecast(longitude, latitude, "si", ["minutely", "hourly", "daily", "alerts", "flags"])
+    getForecast(longitude, latitude, unit, ["minutely", "hourly", "daily", "alerts", "flags"])
     .then(result => {
         console.log(result.timezone)
         res.send({
@@ -31,9 +67,10 @@ router.get('/Current', (req, res, next) => {
 router.get('/Hourly', (req, res) => {
     let latitude = req.query["latitude"]
     let longitude = req.query["longitude"]
+    let unit = req.query['unit'] || 'si'
     console.log(longitude)
     console.log(latitude)
-    getForecast(longitude, latitude, "si", ["minutely", "currently", "daily", "alerts", "flags"])
+    getForecast(longitude, latitude, unit, ["minutely", "currently", "daily", "alerts", "flags"])
     .then(result => {
         let counter = 0
         hourlyForecast = []
@@ -60,9 +97,10 @@ router.get('/Hourly', (req, res) => {
 router.get('/Daily', (req, res)=>{
     let latitude = req.query["latitude"]
     let longitude = req.query["longitude"]
+    let unit = req.query['unit'] || 'si'
     console.log(longitude)
     console.log(latitude)
-    getForecast(longitude, latitude, "si", ["minutely", "currently", "hourly", "alerts", "flags"])
+    getForecast(longitude, latitude, unit, ["minutely", "currently", "hourly", "alerts", "flags"])
     .then(result => {
         dailyForecast = []
         result.daily.data.forEach(dd => {
@@ -118,6 +156,7 @@ router.get('/Date', (req, res) => {
     let month = req.query['month']
     let year = req.query['year']
     let time_string = year + '-' + month +'-'+date
+    let unit = req.query['unit'] || 'si'
     console.log(time_string)
     console.log(longtitude)
     console.log(latitude)
