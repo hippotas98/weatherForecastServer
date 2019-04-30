@@ -3,19 +3,15 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
-//var usersRouter = require('./routes/users');
-
+var usersRouter = require('./routes/users');
 var weatherRouter = require('./routes/weather')
 var newsRouter = require('./routes/getWeatherNews')
-var places = require('./routes/places')
-// var passport = require('passport')
+var weatherCacheRouter = require('./routes/weather.cache')
+var placeRouter = require('./routes/places')
 var app = express();
 
-//config oauth2
-// require('./oauth/passport')(passport)
 require('./common/cors.config')(app)
-// app.use(passport.initialize())
-// app.use(passport.session())
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -24,8 +20,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-// app.use('/users', oauthRouter);
+app.use('/users', usersRouter);
+app.use('/places', placeRouter)
 app.use('/weather', weatherRouter);
+app.use('/weathercache', weatherCacheRouter)
 app.use('/news',newsRouter)
-app.use('/places', places)
 module.exports = app;

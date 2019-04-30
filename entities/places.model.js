@@ -16,6 +16,10 @@ let CommentSchema = mongoose.Schema({
 })
 
 let PlaceSchema = mongoose.Schema({
+    _id: {
+        type: String,
+        require: true,
+    },
     name: {
         type: String,
         require: true,
@@ -69,7 +73,7 @@ let PlaceSchema = mongoose.Schema({
         min: [0,'Must be a positive integer'],
         max: [5,'Must less than or equal to 5']
     },
-    count: {
+    peopleRated: {
         type: Number
     }
 })

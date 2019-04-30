@@ -37,7 +37,7 @@ let UserInfor = mongoose.Schema({
 })
 UserInfor.statics.findOrCreateUser = (user, cb) => {
     return this.findOne({
-        'user.id': user.id
+        'idToken': user.idToken
     }, (err, user) => {
         if(!user) {
             var newUser = new that({
