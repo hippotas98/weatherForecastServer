@@ -1,8 +1,14 @@
 const mongoose = require('mongoose')
 
 let CommentSchema = mongoose.Schema({
-    author: {
+    user: {
         type: String
+    },
+    rate: {
+        type: Number,
+    },
+    commentId: {
+        type: String,
     },
     content: {
         type: String
@@ -13,6 +19,18 @@ let PlaceSchema = mongoose.Schema({
     name: {
         type: String,
         require: true,
+    },
+    description: {
+        type: String,
+        require: true,
+    },
+    image: {
+        link: {
+            type: String
+        }, 
+        blob: {
+            type: String
+        }
     },
     address: {
         longitude: {
@@ -39,18 +57,49 @@ let PlaceSchema = mongoose.Schema({
         maxTemp: {
             type: Number
         },
-        season: {
-            type: String
+        seasons: {
+            type: Array
         }
     },
     comments: {
         type: [CommentSchema]
     },
-    rating: {
+    rate: {
         type: Number,
         min: [0,'Must be a positive integer'],
         max: [5,'Must less than or equal to 5']
+    },
+    count: {
+        type: Number
     }
+})
+
+PlaceSchema.statics.addPlace = ((data, cb) => {
+    let place = {
+        name: data.name,
+        image: {
+            link: data.link,
+            blob: ''
+        },
+        description: data.description,
+        address: {
+            longitude: data.long,
+            latitude: data.lat,
+            city: data.city,
+            detail: data.address
+        },
+        preference: {
+            minTemp: data.minTemp,
+            maxTemp: data.maxTemp,
+            seasons: data.seasons
+        },
+        comments: data.comments,
+        rate: data.rate,
+        peopleRated: data.comments.length
+    }
+    return this.insert(place)
+        .then(result => cb(null, result))
+        .catch(err => cb(err, null))
 })
 
 module.exports = PlaceSchema;

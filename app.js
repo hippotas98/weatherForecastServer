@@ -7,6 +7,7 @@ var indexRouter = require('./routes/index');
 
 var weatherRouter = require('./routes/weather')
 var newsRouter = require('./routes/getWeatherNews')
+var places = require('./routes/places')
 // var passport = require('passport')
 var app = express();
 
@@ -26,4 +27,5 @@ app.use('/', indexRouter);
 // app.use('/users', oauthRouter);
 app.use('/weather', weatherRouter);
 app.use('/news',newsRouter)
+app.use('/places', places)
 module.exports = app;
