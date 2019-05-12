@@ -4,6 +4,9 @@ let hourlyForecast = mongoose.Schema({
     begin: {
         type: String
     },
+    unit: {
+        type: String
+    },
     location: {
         lat: {
             type: Number,
@@ -38,11 +41,13 @@ hourlyForecast.statics.cache = function (data, cb) {
 
     return this.deleteMany({
         'location.long': data.location.long,
-        'location.lat': data.location.lat
+        'location.lat': data.location.lat,
+        'unit': data.unit
     }, (err, document) => {
         if (err) console.log('error\n' + document)
         let newData = new this({
             begin: data.begin,
+            unit: data.unit,
             location: data.location,
             weatherInfor: data.weatherInfor
         })

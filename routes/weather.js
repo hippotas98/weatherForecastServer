@@ -70,6 +70,7 @@ router.get('/Hourly', (req, res) => {
     let unit = req.query['unit'] || 'si'
     console.log(longitude)
     console.log(latitude)
+    console.log(unit)
     getForecast(longitude, latitude, unit, ["minutely", "currently", "daily", "alerts", "flags"])
     .then(result => {
         let counter = 0
@@ -98,6 +99,7 @@ router.get('/Daily', (req, res)=>{
     let latitude = req.query["latitude"]
     let longitude = req.query["longitude"]
     let unit = req.query['unit'] || 'si'
+    console.log(unit)
     console.log(longitude)
     console.log(latitude)
     getForecast(longitude, latitude, unit, ["minutely", "currently", "hourly", "alerts", "flags"])

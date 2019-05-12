@@ -48,6 +48,7 @@ router.get('/Current', (req, res, next) => {
     let unit = req.query['unit'] || 'si'
     console.log(longitude)
     console.log(latitude)
+    console.log(unit)
     getForecast(longitude, latitude, unit, ["minutely", "hourly", "daily", "alerts", "flags"])
         .then(result => {
             console.log(result.timezone)
@@ -71,7 +72,13 @@ router.get('/Hourly', (req, res) => {
     let unit = req.query['unit'] || 'si'
     console.log(longitude)
     console.log(latitude)
-    mongoose.model('Hourly').findOne({ 'begin': new Date().toDateString() + ' ' + new Date().getHours(), 'location.long': longitude, 'location.lat': latitude}, 
+    console.log(unit)
+    mongoose.model('Hourly').findOne({ 
+        'begin': new Date().toDateString() + ' ' + new Date().getHours(), 
+        'location.long': longitude, 
+        'location.lat': latitude,
+        'unit': unit
+    }, 
         (err, result) => {
         if (err) console.log(err)
         if (!result) {
@@ -89,6 +96,7 @@ router.get('/Hourly', (req, res) => {
                     let date = new Date(hourlyForecast[0].time)
                     data = {
                         begin: date.toDateString() + ' ' + date.getHours(),
+                        unit: unit,
                         location: {
                             long: longitude,
                             lat: latitude
@@ -119,7 +127,12 @@ router.get('/Daily', (req, res) => {
     let unit = req.query['unit'] || 'si'
     console.log(longitude)
     console.log(latitude)
-    mongoose.model('Daily').findOne({ 'begin': new Date().toDateString(), 'location.long': longitude, 'location.lat': latitude }, (err, result) => {
+    console.log(unit)
+    mongoose.model('Daily')
+    .findOne({ 'begin': new Date().toDateString(), 
+    'location.long': longitude, 
+    'location.lat': latitude,
+'unit': unit}, (err, result) => {
         if (!result) {
             getForecast(longitude, latitude, unit, ["minutely", "currently", "hourly", "alerts", "flags"])
                 .then(result => {
@@ -159,6 +172,7 @@ router.get('/Daily', (req, res) => {
                     })
                     data = {
                         begin: dailyForecast[0].date,
+                        unit: unit,
                         location: {
                             long: longitude,
                             lat: latitude
