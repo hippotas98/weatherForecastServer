@@ -2,6 +2,34 @@ var express = require('express');
 var router = express.Router();
 var Places = require('../common/mongoose').model('Places')
 var uuidv4 = require('uuid/v4')
+var axios = require('axios')
+
+const opencageAPIkey = "e7abaf1972a949caaa6afa4358e87341"
+
+router.get('/toAddress/:long/:lat', (req, res) => {
+    let long = req.params['long']
+    let lat = req.params['lat']
+    let lat_lng = lat + ', ' + long
+    let requestUrl = "https://api.opencagedata.com/geocode/v1/json?q=" + lat_lng + "&key=" + opencageAPIkey
+    axios.get(requestUrl)
+    .then(data => {
+        let response = []
+        let results = data.data.results
+        for(let i = 0;i<results.length;++i){
+            response.push({
+                'city': results[i].components.city,
+                'address': results[i].formatted
+            })
+        }
+        let remaining = data.data.rate.remaining
+        res.send({
+            remaining: remaining,
+            results: response,
+            totalresult: response.length
+        })
+    })
+})
+
 router.get('/', (req, res) => {
     let min_temp = req.query['min_temp']
     let max_temp = req.query['max_temp']

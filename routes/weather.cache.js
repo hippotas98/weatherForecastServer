@@ -39,7 +39,6 @@ router.post('/Summary', (req, res, next) => {
 
     }
 
-
 })
 
 router.get('/Current', (req, res, next) => {
