@@ -52,6 +52,9 @@ let PlaceSchema = mongoose.Schema({
         detail: {
             require: true,
             type: String
+        },
+        country: {
+            type: String
         }
     },
     preference: {
@@ -93,7 +96,8 @@ PlaceSchema.statics.addPlace = ((data, cb) => {
             longitude: data.long,
             latitude: data.lat,
             city: data.city,
-            detail: data.address
+            detail: data.address,
+            country: data.country
         },
         preference: {
             minTemp: data.minTemp,

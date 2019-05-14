@@ -35,8 +35,9 @@ router.get('/', (req, res) => {
     let max_temp = req.query['max_temp']
     let city = req.query['city']
     let tag = req.query['tag'] || ''
+    let country = req.query['country']
     let season = getSeason(new Date().getMonth())
-    getFavPlaces(min_temp, max_temp, season, tag, city, (result) => {
+    getFavPlaces(min_temp, max_temp, season, tag, city, country, (result) => {
         res.send(result)
     })
 
@@ -55,7 +56,8 @@ router.post('/', (req, res) => {
             longitude: data.long,
             latitude: data.lat,
             city: data.city,
-            detail: data.address
+            detail: data.address,
+            country: data.country
         },
         preference: {
             minTemp: data.minTemp,
@@ -148,7 +150,8 @@ router.put('/:placeId', (req, res) => {
                 longitude: new_place.long,
                 latitude: new_place.lat,
                 city: new_place.city,
-                detail: new_place.address
+                detail: new_place.address,
+                country: new_place.country
             }
             result.preference = {
                 minTemp: new_place.minTemp,
@@ -188,15 +191,18 @@ getSeason = (month) => {
     }
     else return 'error'
 }
-getFavPlaces = (min_temp, max_temp, season, tag, city, cb) => {
+getFavPlaces = (min_temp, max_temp, season, tag, city, country, cb) => {
     let fav = []
     if(city!=null) {
         search = {
-            'address.city': city
+            'address.city': city,
+            'address.country': country
         }
     }
     else {
-        search = {}
+        search = {
+            'address.country': country
+        }
     }
     Places.find(search)
         .then(results => {
