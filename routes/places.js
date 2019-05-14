@@ -34,8 +34,9 @@ router.get('/', (req, res) => {
     let min_temp = req.query['min_temp']
     let max_temp = req.query['max_temp']
     let city = req.query['city']
+    let tag = req.query['tag'] || ''
     let season = getSeason(new Date().getMonth())
-    getFavPlaces(min_temp, max_temp, season, city, (result) => {
+    getFavPlaces(min_temp, max_temp, season, tag, city, (result) => {
         res.send(result)
     })
 
@@ -59,7 +60,8 @@ router.post('/', (req, res) => {
         preference: {
             minTemp: data.minTemp,
             maxTemp: data.maxTemp,
-            seasons: data.seasons
+            seasons: data.seasons,
+            tag: data.tag
         },
         comments: data.comments,
         rate: data.rate,
@@ -128,6 +130,46 @@ router.delete('/remove/comment/:placeId/:commentId', (req, res) => {
         })
 })
 
+router.put('/:placeId', (req, res) => {
+    let new_place = req.body
+    let placeId = req.params['placeId']
+    Places.findOne({
+        '_id': placeId
+    })  
+    .then(result => {
+        if(result){
+            result.name =  new_place.name
+            result.image = {
+                link: new_place.link,
+                blob: ''
+            }
+            result.escription = new_place.description
+            result.address =  {
+                longitude: new_place.long,
+                latitude: new_place.lat,
+                city: new_place.city,
+                detail: new_place.address
+            }
+            result.preference = {
+                minTemp: new_place.minTemp,
+                maxTemp: new_place.maxTemp,
+                seasons: new_place.seasons,
+                tag: new_place.tag
+            }
+            result.save((err, savedResult) => {
+                if(err) console.log(err)
+                res.send(savedResult)
+            })
+        }
+        else {
+            console.log('cannot find the place')
+        }
+    })
+    .catch(err => {
+        console.log(err)
+    }) 
+})
+
 average = (curRate, curQuanity, newRateValue, newQuanity) => {
     return (curRate * curQuanity + newRateValue) / newQuanity
 }
@@ -146,15 +188,28 @@ getSeason = (month) => {
     }
     else return 'error'
 }
-getFavPlaces = (min_temp, max_temp, season, city, cb) => {
+getFavPlaces = (min_temp, max_temp, season, tag, city, cb) => {
     let fav = []
-    Places.find({ 'address.city': city })
+    if(city!=null) {
+        search = {
+            'address.city': city
+        }
+    }
+    else {
+        search = {}
+    }
+    Places.find(search)
         .then(results => {
             for (let index = 0; index < results.length; ++index) {
                 if (results[index].preference.minTemp <= min_temp
                     && results[index].preference.maxTemp >= max_temp
                     && results[index].preference.seasons.find((ss) => ss == season) != null) {
-                    fav.push(results[index])
+                        if(tag=='')
+                            fav.push(results[index])
+                        else {
+                            if(results[index].preference.tag.find((t) => t == tag) != null)
+                                fav.push(results[index])
+                        }
                 }
             }
             cb(fav)

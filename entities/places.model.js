@@ -63,6 +63,9 @@ let PlaceSchema = mongoose.Schema({
         },
         seasons: {
             type: Array
+        },
+        tag: {
+            type: Array
         }
     },
     comments: {
@@ -95,7 +98,8 @@ PlaceSchema.statics.addPlace = ((data, cb) => {
         preference: {
             minTemp: data.minTemp,
             maxTemp: data.maxTemp,
-            seasons: data.seasons
+            seasons: data.seasons,
+            tag: data.tag
         },
         comments: data.comments,
         rate: data.rate,
