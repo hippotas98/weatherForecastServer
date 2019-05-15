@@ -73,13 +73,14 @@ router.post('/', (req, res) => {
         .then(result => res.send(result))
         .catch(error => console.log(error))
 })
-router.post('/comments/:placeId/:userName/:rate', (req, res) => {
+router.post('/comments/:placeId/:userName/:email/:rate', (req, res) => {
     let rate = parseInt(req.params['rate'])
     if (rate < 0) res.send('Rate cannot lower than 0')
     else if (rate > 6) res.send('Rate cannot larger than 5')
     else {
         let placeId = req.params['placeId']
         let userName = req.params['userName']
+        let userEmail = req.params['email']
         let comment = req.body.comment
         Places.findOne({ '_id': placeId })
             .then(result => {
@@ -87,6 +88,7 @@ router.post('/comments/:placeId/:userName/:rate', (req, res) => {
                 tempResult.push({
                     content: comment,
                     user: userName,
+                    email: userEmail,
                     commentId: uuidv4(),
                     rate: rate
                 })

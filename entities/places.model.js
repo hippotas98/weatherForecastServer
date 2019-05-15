@@ -4,6 +4,10 @@ let CommentSchema = mongoose.Schema({
     user: {
         type: String
     },
+    email: {
+        type: String,
+        require: true,
+    },
     rate: {
         type: Number,
     },
