@@ -116,7 +116,12 @@ router.delete('/remove/comment/:placeId/:commentId', (req, res) => {
             if (result) {
                 for (let idx = 0; idx < result.comments.length; idx++) {
                     if (result.comments[idx].commentId == commentId) {
-                        result.rate = average(result.rate, result.peopleRated, -1 * result.comments[idx].rate, result.peopleRated - 1)
+                        if(result.peopleRated-1==0){
+                            result.rate = 0
+                        }
+                        else{
+                            result.rate = average(result.rate, result.peopleRated, -1 * result.comments[idx].rate, result.peopleRated - 1)
+                        }
                         result.peopleRated -= 1
                         let temp = []
                         for(let i = 0; i< result.comments.length;++i)
@@ -125,6 +130,7 @@ router.delete('/remove/comment/:placeId/:commentId', (req, res) => {
                         console.log(temp)
                         result.comments = temp
                         result.save((err, savedResult) => {
+                            console.log(savedResult)
                             res.send(savedResult)
                         })
                     }
