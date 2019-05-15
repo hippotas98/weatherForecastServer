@@ -118,9 +118,12 @@ router.delete('/remove/comment/:placeId/:commentId', (req, res) => {
                     if (result.comments[idx].commentId == commentId) {
                         result.rate = average(result.rate, result.peopleRated, -1 * result.comments[idx].rate, result.peopleRated - 1)
                         result.peopleRated -= 1
-                        let tempResult = result.comments
-                        delete tempResult[idx]
-                        result.comments = tempResult
+                        let temp = []
+                        for(let i = 0; i< result.comments.length;++i)
+                            if(i != idx)
+                                temp.push(result.comments[i])
+                        console.log(temp)
+                        result.comments = temp
                         result.save((err, savedResult) => {
                             res.send(savedResult)
                         })
